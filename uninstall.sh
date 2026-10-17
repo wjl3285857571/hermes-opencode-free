@@ -5,7 +5,9 @@
 set -uo pipefail
 
 HERMES_ROOT="${HERMES_ROOT:-$HOME/.hermes}"
-PROVIDER=ocbridge
+PROVIDER=opencode-free
+# launchd Labels are dot-separated; keep them distinct from the provider key.
+LABEL_SLUG=opencodefree
 PROFILE_DIR="$HERMES_ROOT/profiles/agents-md-code/tools/$PROVIDER"
 HERMES_BIN="$HERMES_ROOT/.hermes/bin/hermes"
 
@@ -13,11 +15,11 @@ HERMES_BIN="$HERMES_ROOT/.hermes/bin/hermes"
 
 echo "==> unloading launchd agents"
 for label in serve bridge refresh; do
-  plist="$HOME/Library/LaunchAgents/local.hermes.$PROVIDER.$label.plist"
+  plist="$HOME/Library/LaunchAgents/local.hermes.$LABEL_SLUG.$label.plist"
   if [ -f "$plist" ]; then
     launchctl unload "$plist" 2>/dev/null || true
     rm -f "$plist"
-    echo "    removed local.hermes.$PROVIDER.$label"
+    echo "    removed local.hermes.$LABEL_SLUG.$label"
   fi
 done
 

@@ -3,29 +3,30 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>local.hermes.ocbridge.refresh</string>
+    <string>local.hermes.opencodefree.serve</string>
 
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>__DIR__/refresh-models.sh</string>
+        <string>__DIR__/run-serve.sh</string>
     </array>
 
     <key>WorkingDirectory</key>
     <string>__DIR__</string>
 
-    <!-- Hourly: opencode delists models on its own schedule (ll-alpha-free vanished
-         mid-session today), and the bridge reflects it immediately. Hourly is cheap
-         enough to just always be current. -->
-    <key>StartInterval</key>
-    <integer>3600</integer>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
 
+    <!-- Only in a logged-in GUI session: the serve half is an interactive-client
+         component, and running it headless buys nothing but a stale port. -->
     <key>LimitLoadToSessionType</key>
     <string>Aqua</string>
 
     <key>StandardOutPath</key>
-    <string>__DIR__/refresh.log</string>
+    <string>__DIR__/serve.stdout.log</string>
     <key>StandardErrorPath</key>
-    <string>__DIR__/refresh.log</string>
+    <string>__DIR__/serve.stderr.log</string>
 </dict>
 </plist>

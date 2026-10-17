@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>local.hermes.ocbridge.bridge</string>
+    <string>local.hermes.opencodefree.bridge</string>
 
     <key>ProgramArguments</key>
     <array>

@@ -10,7 +10,9 @@ NODE_BIN="$(command -v node || true)"
 OC_CLI=/Applications/OpenCode.app/Contents/Resources/opencode-cli
 DEFAULT_PORT=4600
 BRIDGE_PORT=5577
-PROVIDER=ocbridge
+PROVIDER=opencode-free
+# launchd Labels are dot-separated; keep them distinct from the provider key.
+LABEL_SLUG=opencodefree
 
 say()  { printf '%s\n' "$*"; }
 die()  { printf 'error: %s\n' "$*" >&2; exit 1; }
@@ -36,27 +38,27 @@ mkdir -p "$HOME/Library/LaunchAgents"
 sed -e "s#__DIR__#$PROFILE_DIR#g" \
     -e "s#__NODE__#$NODE_BIN#g" \
     -e "s#__PORT__#$DEFAULT_PORT#g" \
-    "$SRC/launchd/local.hermes.ocbridge.serve.plist" \
-    > "$HOME/Library/LaunchAgents/local.hermes.$PROVIDER.serve.plist"
+    "$SRC/launchd/local.hermes.opencodefree.serve.plist" \
+    > "$HOME/Library/LaunchAgents/local.hermes.$LABEL_SLUG.serve.plist"
 
 sed -e "s#__DIR__#$PROFILE_DIR#g" \
     -e "s#__NODE__#$NODE_BIN#g" \
     -e "s#__BRIDGE_PORT__#$BRIDGE_PORT#g" \
     -e "s#__SERVE_PORT__#$DEFAULT_PORT#g" \
     -e "s#__PATH__#$(dirname "$NODE_BIN"):/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin#g" \
-    "$SRC/launchd/local.hermes.$PROVIDER.bridge.plist" \
-    > "$HOME/Library/LaunchAgents/local.hermes.$PROVIDER.bridge.plist"
+    "$SRC/launchd/local.hermes.$LABEL_SLUG.bridge.plist" \
+    > "$HOME/Library/LaunchAgents/local.hermes.$LABEL_SLUG.bridge.plist"
 
 sed -e "s#__DIR__#$PROFILE_DIR#g" \
-    "$SRC/launchd/local.hermes.$PROVIDER.refresh.plist" \
-    > "$HOME/Library/LaunchAgents/local.hermes.$PROVIDER.refresh.plist"
+    "$SRC/launchd/local.hermes.$LABEL_SLUG.refresh.plist" \
+    > "$HOME/Library/LaunchAgents/local.hermes.$LABEL_SLUG.refresh.plist"
 
 for label in serve bridge refresh; do
-  plist="$HOME/Library/LaunchAgents/local.hermes.$PROVIDER.$label.plist"
+  plist="$HOME/Library/LaunchAgents/local.hermes.$LABEL_SLUG.$label.plist"
   plutil -lint "$plist" >/dev/null
   launchctl unload "$plist" 2>/dev/null || true
   launchctl load -w "$plist"
-  say "    loaded local.hermes.$PROVIDER.$label"
+  say "    loaded local.hermes.$LABEL_SLUG.$label"
 done
 
 say "==> waiting for the chain to come up"

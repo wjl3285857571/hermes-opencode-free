@@ -1,4 +1,4 @@
-# hermes-ocbridge
+# hermes-opencode-free
 
 Use OpenCode's **zero-cost model tier** as an LLM backend for [Hermes Agent](https://github.com/NousResearch/hermes-agent), on macOS, with no API key.
 
@@ -54,8 +54,8 @@ longcat-2.5-preview-free
 Requirements: macOS, OpenCode's app installed, Node.js on `PATH`.
 
 ```bash
-git clone https://github.com/wjl3285857571/hermes-ocbridge
-cd hermes-ocbridge
+git clone https://github.com/wjl3285857571/hermes-opencode-free
+cd hermes-opencode-free
 ./install.sh
 ```
 
@@ -63,10 +63,16 @@ The installer copies the scripts, writes three launchd agents, registers the pro
 Hermes profile that exists, and verifies the chain end to end. It prints a rollback command.
 
 Then **fully quit and relaunch the Hermes desktop app** (⌘Q, not just close the window) — it reads
-`config.yaml` at startup. The provider appears under **custom endpoints** as `ocbridge`.
+`config.yaml` at startup. The provider appears under **custom endpoints** as `OPENCODE-FREE`.
+
+It is deliberately *not* named `opencode`: that key is Hermes's existing alias for the **paid**
+`opencode-zen` provider (`hermes_cli/providers.py` maps `"opencode" -> ("opencode-zen", "zen")`),
+so reusing it would collide with the paid route. The key also reuses the name of the dead
+built-in `opencode-free` provider, which upstream removed — which is exactly the right home for a
+free route. Its launchd labels use `opencodefree` (dots, no dashes) per launchd convention.
 
 ```bash
-hermes chat -q "hello" --provider ocbridge --model mimo-v2.6-flash-free
+hermes chat -q "hello" --provider opencode-free --model mimo-v2.6-flash-free
 ```
 
 ## Uninstall
@@ -79,9 +85,9 @@ hermes chat -q "hello" --provider ocbridge --model mimo-v2.6-flash-free
 
 | Label | Role |
 |---|---|
-| `local.hermes.ocbridge.serve` | Runs `opencode serve`, captures its rotating password |
-| `local.hermes.ocbridge.bridge` | Runs `bridge.mjs` on `:5577` |
-| `local.hermes.ocbridge.refresh` | Hourly: syncs the live model list into every profile |
+| `local.hermes.opencodefree.serve` | Runs `opencode serve`, captures its rotating password |
+| `local.hermes.opencodefree.bridge` | Runs `bridge.mjs` on `:5577` |
+| `local.hermes.opencodefree.refresh` | Hourly: syncs the live model list into every profile |
 
 All three are `LimitLoadToSessionType: Aqua` — they only run inside a logged-in GUI session, since
 the serve half is an interactive-client component.
@@ -101,7 +107,7 @@ hourly. Run it by hand to force a sync:
 ./bridge/refresh-models.sh
 ```
 
-It skips profiles without an `ocbridge` entry, so it never writes config where the provider is
+It skips profiles without an `opencode-free` entry, so it never writes config where the provider is
 unused. It writes through `hermes config set` — never by editing `config.yaml` directly, which is a
 hard Hermes rule (one stray indent can take down the live gateway).
 
@@ -163,10 +169,10 @@ Scripts derive their own location, so the repo works from any checkout path.
 ## Troubleshooting
 
 ```bash
-DIR=~/.hermes/profiles/agents-md-code/tools/ocbridge
+DIR=~/.hermes/profiles/agents-md-code/tools/opencode-free
 
 # is anything running?
-launchctl list | grep ocbridge
+launchctl list | grep opencode-free
 curl -s localhost:5577/healthz
 curl -s localhost:4600/api/health -u "opencode:$(cat "$DIR/serve_password")"
 
