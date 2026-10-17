@@ -1,0 +1,15 @@
+# Runtime state written by run-serve.sh / bridge.mjs / refresh-models.sh
+serve_password
+serve.log
+serve.stdout.log
+serve.stderr.log
+bridge.log
+bridge.stdout.log
+bridge.stderr.log
+refresh.log
+
+# Local backup made by install.sh on this machine
+backup-*/
+
+.DS_Store
+node_modules/
